@@ -1,0 +1,345 @@
+\documentclass[a4j,11pt]{jarticle}
+% ファイル先頭から\begin{document}までの内容（プレアンブル）については，
+% 教員からの指示がない限り， { } の中を書き換えるだけでよい．
+
+% この部分は変更しないこと！
+\usepackage[top=25truemm,  bottom=30truemm,
+            left=25truemm, right=25truemm]{geometry}
+
+% ToDo: 提出要領に従って，適切なタイトル・サブタイトルを設定する
+% 「第 X 回」の表記は作成の都度変更すること．
+\title{工学基礎実験実習 \\
+       ファイル操作とシェル 第 2 回レポート}
+
+% ToDo: 自分自身の氏名と学生番号に書き換える
+\author{氏名: 重近 大智 (SHIGECHIKA, Daichi) \\
+        学生番号: 09501527}
+
+% ToDo: 教員の指示に従って適切に書き換える
+\date{出題日: 2019年5月21日 \\
+      提出日: 2019年5月日 \\
+      締切日: 2019年5月28日 \\}  % 注：最後の\\は不要に見えるが必要．
+
+% ToDo: 図を入れる場合，以下の1行を有効にする
+%\usepackage{graphicx}
+
+\begin{document}
+\maketitle
+% 目次つきの表紙ページにする場合はコメントを外す
+%{\footnotesize \tableofcontents \newpage}
+
+%==================================================================%
+\section{はじめに}
+ファイルリダイレクションとパイプ，シェルスクリプトやコマンドについて記述する.
+機能及び具体例についても記述する．
+%==================================================================%
+\section{ファイルリダイレクションとパイプ}
+ \subsection{リダイレクション}
+\subsubsection{標準出力のリダイレクション}
+   \begin{description}
+\item[機能]
+一般的にコマンドは実行すると端末上に結果が表示されるが，\verb|>|記号を使うことで，ファイルに結果を出力することができる. 具体的には以下のようにする.
+\item[具体例]
+\verb|cat|コマンドによって出力される「solarsystem1」の表示結果を「datalist」に書き込む場合を考える.
+\begin{verbatim}
+$ cat solarsystem1 > datalist
+$ cat datalist
+Sun      0.000  1304000      1.41
+Mercury  0.579        0.056  5.43
+Venus    1.082        0.857  5.24
+Earth    1.496        1.000  5.52
+Mars     2.279        0.151  3.93
+$
+\end{verbatim}
+上記のようにすると，\verb|cat|によって出力された「solarsystem1」の内容が「datalist」に出力される.
+   \end{description}
+
+\subsubsection{標準入力のリダイレクション}
+\begin{description}
+\item[機能]
+逆に、\verb|<|記号を用いることで，データなどをファイルから入力することができる. 具体的には以下のようにする.
+\item[具体例]
+\verb|sort|コマンドの並びかえの対象を「solarsystem1」から入力し，2番目の項目を降順に並べる場合を考える.
+\begin{verbatim}
+$ sort -k 2 -nr < solarsystem1
+Mars     2.279        0.151  3.93
+Earth    1.496        1.000  5.52
+Venus    1.082        0.857  5.24
+Mercury  0.579        0.056  5.43
+Sun      0.000  1304000      1.41
+$ 
+\end{verbatim}
+上記のようにすると，\verb|sort|コマンドの並びかえの対象を「solarsystem1」から入力することができる.
+\end{description}
+
+\subsection{パイプ}
+\begin{description}
+  \item[機能]
+あるコマンドの出力結果を別のコマンドに入力する場合，別のファイルを経由せず直接入力することができる. この時にパイプと呼ばれる機能を利用する.
+  \item[具体例]
+「solarsystem1」というファイルの表示結果を\verb|sort|コマンドの入力にする場合を考える.
+    \begin{verbatim}
+$ cat solarsystem1 | sort -k 4 -nr
+Earth    1.496        1.000  5.52
+Mercury  0.579        0.056  5.43
+Venus    1.082        0.857  5.24
+Mars     2.279        0.151  3.93
+Sun      0.000  1304000      1.41
+$
+    \end{verbatim}
+上記のようにすると，\verb|cat|コマンドによって出力された「solarsystem1」というファイルの表示結果が，\verb|sort|コマンドに入力される.
+\end{description}
+
+\section{コマンドと実行可能ファイルの関係}
+\subsection{ソースファイルの作成}
+\begin{description}
+\item「Windows7」と表示するC言語のプログラムのソースファイルを作ることを考える.
+ファイル名は「Windows7.c」とし，内容は以下の通りである.
+\begin{verbatim}
+  1	#include<stdio.h>
+     2	int main(void)
+     3	{
+     4	    printf ("Windows7\n");
+     5	    return 0;
+     6	}
+\end{verbatim}
+\end{description}
+\subsection{ソースファイルのコンパイルと実行可能ファイルの実行}
+\begin{description}
+\item gccコマンドを用いてコンパイルすると，実行可能ファイル「a.out」が作成され，これを端末上で実行すると以下のようになる.
+\begin{verbatim}
+$ gcc Windows7.c
+$ ./a.out
+Windows7
+\end{verbatim}
+\verb|./a.out|を実行すると，結果として「Windows7」が表示される.
+\end{description}
+
+\subsection{シェルスクリプト}
+実行可能形式のファイルは，C言語のソースファイルをコンパイルするだけでなく，シェルスクリプトによって作成することもできる.
+ただしシェルスクリプトを実行するには，事前に\verb|chmod|コマンドを用いて実行パーミッションを付加する必要がある.
+
+ここでは実行すると「Windows10」と表示するシェルスクリプト「Windows10.sh」を作成する.
+スクリプトは以下の通りである.
+\begin{verbatim}
+#!/bin/sh
+echo "Windows10"
+\end{verbatim}
+実行パーミッションを付加するには，次のように入力する.
+\begin{verbatim}
+$ chmod 755 Windows10.sh
+\end{verbatim}
+C言語の実行可能ファイル「a.out」と同様にシェルスクリプトを実行する.
+実行するには，次のように入力する.
+\begin{verbatim}
+$ ./Windows10.sh
+Windows10
+\end{verbatim}
+\verb|./Windows10.sh|を実行すると，結果として「Windows10」が表示される.
+
+\section{その他のコマンド}
+ここでは前回のレポートに記述しなかったいくつかのコマンドを紹介する．今回はオプションの確認に\verb|man|コマンドも用いた.
+\subsection{\texttt{ps}コマンド}
+\verb|ps|コマンドの概要は，以下の通りである.
+\begin{description}
+  \item[機能]
+    実行中のプロセスを表示する．
+  \item[形式]
+    \verb|ps| \verb|(option)|
+  \item[オプション]
+    \begin{itemize}
+      \item \verb|-e|：  システム上の全てのプロセスを表示する.
+      \item \verb|-u|：  rootとして実行されている全てのプロセスを表示する.
+    \end{itemize}
+  \item[使用例]
+    \begin{verbatim}
+$ ps
+  PID TTY          TIME CMD
+ 4064 pts/0    00:00:41 emacs
+24252 pts/0    00:00:00 ps
+31768 pts/0    00:00:00 bash
+32556 pts/0    00:00:22 evince
+$ 
+    \end{verbatim}
+\verb|ps|コマンドを実行すると，上記のような結果が得られた．
+この結果より，エディタ(emacs)，\verb|ps|コマンド，\verb|evince|コマンドなどが
+実行されていることが分かる．
+\verb|ps -l|とすると，次のような詳細な表示になった．
+\begin{verbatim}
+$ ps -l
+F S   UID   PID  PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD
+0 S  3327  4064 31768  0  80   0 - 288841 poll_s pts/0   00:00:42 emacs
+4 R  3327 31162 31768  0  80   0 - 38304 -      pts/0    00:00:00 ps
+0 S  3327 31768 31756  0  80   0 - 28758 do_wai pts/0    00:00:00 bash
+0 S  3327 32556 31768  0  80   0 - 359568 poll_s pts/0   00:00:23 evince
+$ 
+\end{verbatim}
+\end{description}
+
+% which p.58の4.3節，&,^Z,bg,killはp.59の4.4節
+
+
+
+
+
+% 5.aliasの使用
+
+
+
+
+
+
+
+
+
+
+\subsection{\texttt{rmdir}コマンド}
+\verb|rmdir|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+    ディレクトリを削除する．
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|rmdir| \verb|(option)| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+    \begin{itemize}
+      \item \verb|--ignore-fail-on-non-empty|：  ディレクトリが空でないため削除に失敗した場合，エラーだけを無視する.
+    \end{itemize}
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+    $ rmdir 1
+      $
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{cd}コマンド}
+\verb|cd|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+    カレントディレクトリを変更する．
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|cd| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+    \verb|[directory name]|を入力しなければ，ホームディレクトリに戻る.
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+    $ cd p1
+      $
+    \end{verbatim}
+\end{description}
+%------------------------------------------------------------------%==================================================================%
+\section{ファイル操作のコマンド}
+
+%-----------------------------------------------------------------%
+\subsection{\texttt{cat}コマンド}
+\verb|cat|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+    ファイル内容を連結したり，表示したりする．
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|cat| \verb|(option)| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+オプションは下記の通りである．
+ \begin{itemize}
+      \item \verb|-n|：  行番号を付けて表示する.
+      \item \verb|-v|：  制御コードなどを含むファイルを表示する時に指定する.
+      \item \verb|-b|：  空行を除いて行番号を付け加える. \verb|-n|より優先される.
+    \end{itemize}
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+$ cat -n bindec.c
+     1	main(){
+     2	  int i,j,k,l,p=0;
+     3	  printf("2進数\t10進数\n");
+     4	  for(i=0;i<2;i++)
+     5	    for(j=0;j<2;j++)
+     6	      for(k=0;k<2;k++)
+     7		for(l=0;l<2;l++){
+     8		  printf("%d%d%d%d\t%d\n",i,j,k,l,p++);
+     9		}
+    10	}
+
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{less}コマンド}
+\verb|less|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+    ファイル内容を1画面ごとに表示する．
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|less| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+オプションは下記の通りである．ただし，ファイルを開いた状態でのみ使用できる.
+ \begin{itemize}
+      \item \verb|e|：  1行進む.
+      \item \verb|y|：  1行戻る.
+      \item \verb|f|：  1画面進む. 
+      \item \verb|b|：  1画面戻る.
+    \end{itemize}
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+$ less report1_09501527.tex
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{mv}コマンド}
+\verb|mv|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+     ファイルを移動したり，ファイルの名前を変更したりする.
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|mv| \verb|(option)| \verb|[directory name]| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+オプションは下記の通りである．ただし，\verb|-i|，\verb|-f|，\verb|-n|を一つ以上使用した場合は最後のオプションが使用される.
+\begin{itemize}
+      \item \verb|-i|：  上書きの前に確認を行う.
+      \item \verb|-f|：  上書きの前に確認を行わない.
+      \item \verb|-n|：  既存のファイルには上書きしない.
+      \item \verb|--backup|：  上書き前にバックアップを作成する.
+    \end{itemize}
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+$ mv -i a.txt b.txt
+mv: `b.txt' を上書きしますか? y
+  $ 
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{cp}コマンド}
+\verb|cp|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+     ファイルを移動したり，ファイルの名前を変更したりする.
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|cp| \verb|(option)| \verb|[directory name]| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+オプションは下記の通りである．
+ \begin{itemize}
+      \item \verb|-l|：  コピーの代わりにファイルのハードリンクを作成する.
+      \item \verb|-a|：  ファイルの属性のみコピーする.
+      \item \verb|--backup|：  上書き前にバックアップを作成する.
+    \end{itemize}
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+$ cp a.txt p1
+  $
+    \end{verbatim}
+\end{description}
+
+%------------------------------------------------------------------
+
+
+%==================================================================%
+\section{考察}
+本レポートの作成を通して，CentOSの端末下におけるいくつかのコマンドの使い方，オプションについて理解することができた.
+オプションを指定することで，動作が変わることに驚いた.
+今までは，\verb|ls -a|など，オプションも含めて1つのコマンドだと考えていた.
+端末でコマンドを扱えるようになったことが嬉しく，もっと深く理解したくなった.
+自分でも詳しく調べてみようと思う.
+
+%==================================================================%
+\section{まとめ}
+本レポートでは，CentOSの端末下におけるいくつかのをコマンドをまとめた。またいくつかのオプションについては，端末から\verb|--help|を用いて確認した.
+%==================================================================%
+
+\end{document}

@@ -1,0 +1,328 @@
+\documentclass[a4j,11pt]{jarticle}
+
+
+\usepackage[top=25truemm,  bottom=30truemm,
+            left=25truemm, right=25truemm]{geometry}
+
+\title{工学基礎実験実習 \\
+       ファイル操作とシェル 第 2 回レポート}
+
+\author{氏名: 重近 大智 (SHIGECHIKA, Daichi) \\
+        学生番号: 09501527}
+
+\date{出題日: 2019年5月21日 \\
+      提出日: 2019年5月24日 \\
+      締切日: 2019年5月28日 \\} 
+
+% ToDo: 図を入れる場合，以下の1行を有効にする
+%\usepackage{graphicx}
+
+\begin{document}
+\maketitle
+% 目次つきの表紙ページにする場合はコメントを外す
+%{\footnotesize \tableofcontents \newpage}
+
+%==================================================================%
+\section{はじめに}
+ファイルリダイレクション，パイプ，シェルスクリプトやコマンドについて記述する.
+機能及び具体例についても記述する．
+%==================================================================%
+\section{ファイルリダイレクションとパイプ}
+ \subsection{リダイレクション}
+\subsubsection{標準出力のリダイレクション}
+   \begin{description}
+\item[機能]
+一般的にコマンドは実行すると端末上に結果が表示されるが，\verb|>|記号を使うことで，ファイルに結果を出力することができる. 具体的には以下のようにする.
+\item[具体例]
+\verb|cat|コマンドによって出力される「solarsystem1」の表示結果を「datalist」に書き込む場合を考える.
+\begin{verbatim}
+$ cat solarsystem1 > datalist
+$ cat datalist
+Sun      0.000  1304000      1.41
+Mercury  0.579        0.056  5.43
+Venus    1.082        0.857  5.24
+Earth    1.496        1.000  5.52
+Mars     2.279        0.151  3.93
+$
+\end{verbatim}
+上記のようにすると，\verb|cat|コマンドによって出力された「solarsystem1」の内容が「datalist」に出力される.
+   \end{description}
+
+\subsubsection{標準入力のリダイレクション}
+\begin{description}
+\item[機能]
+逆に、\verb|<|記号を用いることで，データなどをファイルから入力することができる. 具体的には以下のようにする.
+\item[具体例]
+\verb|sort|コマンドの並びかえの対象を「solarsystem1」から入力し，2番目の項目を降順に並べる場合を考える.
+\begin{verbatim}
+$ sort -k 2 -nr < solarsystem1
+Mars     2.279        0.151  3.93
+Earth    1.496        1.000  5.52
+Venus    1.082        0.857  5.24
+Mercury  0.579        0.056  5.43
+Sun      0.000  1304000      1.41
+$ 
+\end{verbatim}
+上記のようにすると，\verb|sort|コマンドの並びかえの対象を「solarsystem1」から入力することができる.
+\end{description}
+
+\subsection{パイプ}
+\begin{description}
+  \item[機能]
+あるコマンドの出力結果を別のコマンドに入力する場合，別のファイルを経由せず直接入力することができる. この時にパイプと呼ばれる機能を利用する.
+  \item[具体例]
+「solarsystem1」というファイルの表示結果を\verb|sort|コマンドの入力にする場合を考える.
+    \begin{verbatim}
+$ cat solarsystem1 | sort -k 4 -nr
+Earth    1.496        1.000  5.52
+Mercury  0.579        0.056  5.43
+Venus    1.082        0.857  5.24
+Mars     2.279        0.151  3.93
+Sun      0.000  1304000      1.41
+$
+    \end{verbatim}
+上記のようにすると，\verb|cat|コマンドによって出力された「solarsystem1」というファイルの表示結果が，\verb|sort|コマンドに入力される.
+\end{description}
+
+\section{コマンドと実行可能ファイルの関係}
+\subsection{ソースファイルの作成}
+\begin{description}
+\item「Windows7」と表示するC言語のプログラムのソースファイルを作ることを考える.
+ファイル名は「Windows7.c」とし，内容は以下の通りである.
+\begin{verbatim}
+  1	#include<stdio.h>
+     2	int main(void)
+     3	{
+     4	    printf ("Windows7\n");
+     5	    return 0;
+     6	}
+\end{verbatim}
+\end{description}
+\subsection{ソースファイルのコンパイルと実行可能ファイルの実行}
+\begin{description}
+\item gccコマンドを用いてコンパイルすると，実行可能ファイル「a.out」が作成され，これを端末上で実行すると以下のようになる.
+\begin{verbatim}
+$ gcc Windows7.c
+$ ./a.out
+Windows7
+\end{verbatim}
+\verb|./a.out|を実行すると，結果として「Windows7」が表示される.
+\end{description}
+
+\subsection{シェルスクリプト}
+実行可能形式のファイルは，C言語のソースファイルをコンパイルするだけでなく，シェルスクリプトによって作成することもできる.
+ただしシェルスクリプトを実行するには，事前に\verb|chmod|コマンドを用いて実行パーミッションを付加する必要がある.
+
+ここでは実行すると「Windows10」と表示するシェルスクリプト「Windows10.sh」を作成する.
+スクリプトは以下の通りである.
+\begin{verbatim}
+#!/bin/sh
+echo "Windows10"
+\end{verbatim}
+実行パーミッションを付加するには，次のように入力する.
+\begin{verbatim}
+$ chmod 755 Windows10.sh
+\end{verbatim}
+C言語の実行可能ファイル「a.out」と同様にシェルスクリプトを実行する.
+実行するには，次のように入力する.
+\begin{verbatim}
+$ ./Windows10.sh
+Windows10
+\end{verbatim}
+\verb|./Windows10.sh|を実行すると，結果として「Windows10」が表示される.
+
+\section{その他のコマンド}
+ここでは前回のレポートに記述しなかったいくつかのコマンドを紹介する．今回はオプションの確認に\verb|man|コマンドも用いた.
+\subsection{\texttt{ps}コマンド}
+\verb|ps|コマンドの概要は，以下の通りである.
+\begin{description}
+  \item[機能]
+    実行中のプロセスを表示する．
+  \item[形式]
+    \verb|ps| \verb|(option)|
+  \item[オプション]
+    \begin{itemize}
+      \item \verb|-e|：  システム上の全てのプロセスを表示する.
+      \item \verb|-u|：  rootとして実行されている全てのプロセスを表示する.
+      \item \verb|-r|：  実行中のプロセスのみ表示する.
+    \end{itemize}
+  \item[使用例]
+    \begin{verbatim}
+$ ps
+  PID TTY          TIME CMD
+ 4064 pts/0    00:00:41 emacs
+24252 pts/0    00:00:00 ps
+31768 pts/0    00:00:00 bash
+32556 pts/0    00:00:22 evince
+$ 
+    \end{verbatim}
+\verb|ps|コマンドを実行すると，上記のような結果が得られた．
+この結果より，エディタ(emacs)，\verb|ps|コマンド，\verb|evince|コマンドなどが
+実行されていることが分かる．
+\verb|ps -l|とすると，次のような詳細な表示になった．
+\begin{verbatim}
+$ ps -l
+F S   UID   PID  PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD
+0 S  3327  4064 31768  0  80   0 - 288841 poll_s pts/0   00:00:42 emacs
+4 R  3327 31162 31768  0  80   0 - 38304 -      pts/0    00:00:00 ps
+0 S  3327 31768 31756  0  80   0 - 28758 do_wai pts/0    00:00:00 bash
+0 S  3327 32556 31768  0  80   0 - 359568 poll_s pts/0   00:00:23 evince
+$ 
+\end{verbatim}
+\end{description}
+
+\subsection{\texttt{which}コマンド}
+\verb|which|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能]
+    指定したコマンドに対応する実行可能形式のファイルのシステム上の場所を表示する.
+  \item[形式]
+    \verb|which| \verb|(option)| \verb|[directory name]|
+  \item[オプション]
+    \begin{itemize}
+      \item \verb|-a|：  パスで合致するものをすべて表示する.
+    \end{itemize}
+  \item[使用例]
+    \begin{verbatim}
+$ which -a emacs
+/usr/bin/emacs
+/bin/emacs
+    \end{verbatim}
+\end{description}
+
+\subsection{＆コマンド}
+\verb|&|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能]
+    プロセスやジョブをバックグラウンンドタスクとして実行する．
+  \item[形式]
+    \verb|[commmand]| \verb|&|
+  \item[オプション]
+    オプションは見つからなかった.
+  \item[使用例]
+    \begin{verbatim}
+$ emacs&
+[2] 10263
+    \end{verbatim}
+\end{description}
+
+\subsection{＾Zコマンド}
+\verb|^Z|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能]
+    フォアグラウンンドのプロセスやジョブを中断する.
+  \item[形式]
+    \verb|^Z|
+  \item[オプション]
+オプションは見つからなかった.
+  \item[使用例]
+    \begin{verbatim}
+$ emacs
+^Z
+[3]+  停止                  emacs
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{bg}コマンド}
+\verb|bg|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能]
+    指定したジョブをバックグラウンドタスクに移行する．
+  \item[形式]
+    \verb|bg| \verb|%|\verb|[jobnumber]|
+  \item[オプション]
+オプションは見つからなかった.
+  \item[使用例]
+    \begin{verbatim}
+$ emacs
+^Z
+[1]+  停止                  emacs
+$ bg %1
+[1]+ emacs &
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{fg}コマンド}
+\verb|fg|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能]
+    指定したジョブをフォアグラウンドタスクに移行する．
+  \item[形式]
+    \verb|fg| \verb|%|\verb|[jobnumber]|
+  \item[オプション]
+オプションは見つからなかった.
+  \item[使用例]
+    \begin{verbatim}
+$ emacs
+^Z[3]   終了                  emacs
+
+[4]+  停止                  emacs
+$ bg %4
+[4]+ emacs &
+$ fg %4
+emacs
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{kill}コマンド}
+\verb|kill|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能]
+     指定したプロセスやジョブに指定されたシグナルを送る．
+  \item[形式]
+    \verb|kill| \verb|[-signal]| \verb|%|\verb|[jobnumber or processID]|
+
+なお，シグナルを指定しなければ「SIGKILL」というシグナルが送られる.
+  \item[オプション]
+オプションは下記の通りである．
+\begin{itemize}
+      \item \verb|-1|：  プロセス番号が1より大きい全てのプロセスに指定されたシグナルを送る.
+      \item \verb|0|：  現在のプロセスグループの全てのプロセスにシグナルを送る.
+    \end{itemize}
+  \item[使用例]
+    \begin{verbatim}
+$ emacs
+^Z
+[3]+  停止                  emacs
+$ kill %3
+    \end{verbatim}
+\end{description}
+
+%------------------------------------------------------------------
+\section{aliasの使用}
+\begin{description}
+ \item[機能]
+コマンドの別名を登録する．
+ \item[形式]
+\verb|alias| \verb|[alias name]="[program name]"|
+ \item[オプション]
+\begin{itemize}
+      \item \verb|-p|：  登録されているaliasの一覧を表示する.
+    \end{itemize}
+\item[使用例]
+fireと打つとfirefoxが起動するようにaliasを登録するには次のようにする.
+\begin{verbatim}
+$ alias fire="firefox"
+\end{verbatim}
+alias登録後，fireと打つと下記のようにfirefoxが実行される.
+\begin{verbatim}
+$ fire
+$ jobs
+[1]-  実行中               firefox &
+[2]+  実行中               evince report2_09501527.pdf &
+$ 
+\end{verbatim}
+aliasを定義することで，firefoxを簡単に起動することができた.
+\end{description}
+%==================================================================%
+\section{考察}
+本レポートの作成を通して，ファイルリダイレクション，パイプやシェルスクリプトなどのコマンドの使い方，またそのオプションについて理解することができた.
+C言語プログラムのソースファイルやシェルスクリプトファイルの中身を一部書き換えることで，どのように動作が変わるのかを検証した. aliasを用いることで一部のコマンドを全て打つ必要をなくすことができて，効率化につなげられると思った.
+
+
+%==================================================================%
+\section{まとめ}
+本レポートでは，ファイルリダイレクション，パイプ，シェルスクリプトやコマンドをまとめた。またいくつかのオプションについては，端末から\verb|--help|と\verb|man|コマンドを用いて確認した.
+%==================================================================%
+
+\end{document}

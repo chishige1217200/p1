@@ -1,0 +1,273 @@
+\documentclass[a4j,11pt]{jarticle}
+% ファイル先頭から\begin{document}までの内容（プレアンブル）については，
+% 教員からの指示がない限り， { } の中を書き換えるだけでよい．
+
+% この部分は変更しないこと！
+\usepackage[top=25truemm,  bottom=30truemm,
+            left=25truemm, right=25truemm]{geometry}
+
+% ToDo: 提出要領に従って，適切なタイトル・サブタイトルを設定する
+% 「第 X 回」の表記は作成の都度変更すること．
+\title{工学基礎実験実習 \\
+       ファイル操作とシェル 第 1 回レポート}
+
+% ToDo: 自分自身の氏名と学生番号に書き換える
+\author{氏名: 重近 大智 (SHIGECHIKA, Daichi) \\
+        学生番号: 09501527}
+
+% ToDo: 教員の指示に従って適切に書き換える
+\date{出題日: 2019年5月14日 \\
+      提出日: 2019年5月15日 \\
+      締切日: 2019年5月21日 \\}  % 注：最後の\\は不要に見えるが必要．
+
+% ToDo: 図を入れる場合，以下の1行を有効にする
+%\usepackage{graphicx}
+
+\begin{document}
+\maketitle
+% 目次つきの表紙ページにする場合はコメントを外す
+%{\footnotesize \tableofcontents \newpage}
+
+%==================================================================%
+\section{はじめに}
+CentOSの端末下におけるいくつかのコマンドの動作をまとめる．
+オプションについても記述する．
+%==================================================================%
+\section{ディレクトリ操作のコマンド}
+
+%------------------------------------------------------------------%
+\subsection{\texttt{ls}コマンド}
+% 参考：sectionの中では verb が使えない．そんな時は？
+
+\verb|ls|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+    カレントディレクトリ内のファイル一覧を表示する．
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|ls| \verb|(option)| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+    オプションは下記の通りである．
+    \begin{itemize}
+      \item \verb|-l|：  ファイルの詳細を表示する.
+      \item \verb|-a|：  . と .. を含めて表示する.
+      \item \verb|-t|：  ファイル更新時間で新しい順に並べる．
+    \end{itemize}
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+    $ ls -la
+      合計 20
+      drwxr-xr-x 2 gotoh staff 4096 2014-04-26 11:40 .
+      drwxr-xr-x 8 gotoh staff 4096 2007-12-01 22:26 ..
+      -rw-r--r-- 1 gotoh staff 6671 2014-04-26 11:40 index.html
+      -rw-r--r-- 1 gotoh staff 2193 2014-04-26 10:18 index.html~
+      $
+    \end{verbatim}
+\end{description}
+
+%------------------------------------------------------------------%
+\subsection{\texttt{rm}コマンド}
+\verb|rm|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+    ファイルを削除する．
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|rm| \verb|(option)| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+    オプションは下記の通りである．
+    \begin{itemize}
+      \item \verb|-i|：  削除前に確認メッセージを表示する.
+      \item \verb|-r|：  ディレクトリとその中身も含めて削除する.
+      \item \verb|-dir|：　空のディレクトリを削除する．
+    \end{itemize}
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+    $ rm -r 1
+      $
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{pwd}コマンド}
+\verb|pwd|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+    カレントディレクトリを表示する．
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|pwd|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+    \verb|--help|からオプションは見つからなかった.
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+    $ pwd
+  /home/users/ecs/09501527
+      $
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{mkdir}コマンド}
+\verb|mkdir|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+    ディレクトリを作成する．
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|mkdir| \verb|(option)| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+    \begin{itemize}
+      \item \verb|-m|：  ファイルモードを設定する.
+    \end{itemize}
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+    $ mkdir 1
+      $
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{rmdir}コマンド}
+\verb|rmdir|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+    ディレクトリを削除する．
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|rmdir| \verb|(option)| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+    \begin{itemize}
+      \item \verb|--ignore-fail-on-non-empty|：  ディレクトリが空でないため削除に失敗した場合，エラーだけを無視する.
+    \end{itemize}
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+    $ rmdir 1
+      $
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{cd}コマンド}
+\verb|cd|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+    カレントディレクトリを変更する．
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|cd| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+    \verb|[directory name]|を入力しなければ，ホームディレクトリに戻る.
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+    $ cd p1
+      $
+    \end{verbatim}
+\end{description}
+%------------------------------------------------------------------%==================================================================%
+\section{ファイル操作のコマンド}
+
+%-----------------------------------------------------------------%
+\subsection{\texttt{cat}コマンド}
+\verb|cat|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+    ファイル内容を連結したり，表示したりする．
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|cat| \verb|(option)| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+オプションは下記の通りである．
+ \begin{itemize}
+      \item \verb|-n|：  行番号を付けて表示する.
+      \item \verb|-v|：  制御コードなどを含むファイルを表示する時に指定する.
+      \item \verb|-b|：  空行を除いて行番号を付け加える. \verb|-n|より優先される.
+    \end{itemize}
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+$ cat -n bindec.c
+     1	main(){
+     2	  int i,j,k,l,p=0;
+     3	  printf("2進数\t10進数\n");
+     4	  for(i=0;i<2;i++)
+     5	    for(j=0;j<2;j++)
+     6	      for(k=0;k<2;k++)
+     7		for(l=0;l<2;l++){
+     8		  printf("%d%d%d%d\t%d\n",i,j,k,l,p++);
+     9		}
+    10	}
+
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{less}コマンド}
+\verb|less|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+    ファイル内容を1画面ごとに表示する．
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|less| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+オプションは下記の通りである．ただし，ファイルを開いた状態でのみ使用できる.
+ \begin{itemize}
+      \item \verb|e|：  1行進む.
+      \item \verb|y|：  1行戻る.
+      \item \verb|f|：  1画面進む. 
+      \item \verb|b|：  1画面戻る.
+    \end{itemize}
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+$ less report1_09501527.tex
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{mv}コマンド}
+\verb|mv|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+     ファイルを移動したり，ファイルの名前を変更したりする.
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|mv| \verb|(option)| \verb|[directory name]| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+オプションは下記の通りである．ただし，\verb|-i|，\verb|-f|，\verb|-n|を一つ以上使用した場合は最後のオプションが使用される.
+\begin{itemize}
+      \item \verb|-i|：  上書きの前に確認を行う.
+      \item \verb|-f|：  上書きの前に確認を行わない.
+      \item \verb|-n|：  既存のファイルには上書きしない.
+      \item \verb|--backup|：  上書き前にバックアップを作成する.
+    \end{itemize}
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+$ mv -i a.txt b.txt
+mv: `b.txt' を上書きしますか? y
+  $ 
+    \end{verbatim}
+\end{description}
+
+\subsection{\texttt{cp}コマンド}
+\verb|cp|コマンドの概要は，以下の通りである．
+\begin{description}
+  \item[機能] % コマンドの機能内容を書く．
+     ファイルを移動したり，ファイルの名前を変更したりする.
+  \item[形式] % コマンドの入力形式を書く．
+    \verb|cp| \verb|(option)| \verb|[directory name]| \verb|[directory name]|
+  \item[オプション] % オプションと内容を箇条書きで書く．
+オプションは下記の通りである．
+ \begin{itemize}
+      \item \verb|-l|：  コピーの代わりにファイルのハードリンクを作成する.
+      \item \verb|-a|：  ファイルの属性のみコピーする.
+      \item \verb|--backup|：  上書き前にバックアップを作成する.
+    \end{itemize}
+  \item[使用例] % コマンドの実行時に得られる結果を示す．
+    \begin{verbatim}
+$ cp a.txt p1
+  $
+    \end{verbatim}
+\end{description}
+
+%------------------------------------------------------------------
+
+
+%==================================================================%
+\section{考察}
+本レポートの作成を通して，CentOSの端末下におけるいくつかのコマンドの使い方，オプションについて理解することができた.
+オプションを指定することで，動作が変わることに驚いた.
+今までは，\verb|ls -a|など，オプションも含めて1つのコマンドだと考えていた.
+端末でコマンドを扱えるようになったことが嬉しく，もっと深く理解したくなった.
+自分でも詳しく調べてみようと思う.
+
+%==================================================================%
+\section{まとめ}
+本レポートでは，CentOSの端末下におけるいくつかのをコマンドをまとめた。またいくつかのオプションについては，端末から\verb|--help|を用いて確認した.
+%==================================================================%
+
+\end{document}

@@ -1,0 +1,8 @@
+#include <stdio.h>
+/* getchar() != EOFという式の値が0か1であることを確認するプログラム */
+
+main()
+{
+    int c;
+
+    printf("c = getchar()) != EOF")
